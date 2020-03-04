@@ -20,6 +20,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using OxyPlot.Axes;
+using Windows.System.Threading;
+using Windows;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -39,8 +41,19 @@ namespace RealTimeGraph {
         private IMetaWearBoard metawear2;
         private IAccelerometer accelerometer2;
 
+        public DispatcherTimer dispatcherTimer;
+
+        public SensorData RW;
+        public SensorData LW;
+
         public LineGraph() {
             InitializeComponent();
+            Logger.StartLogger("SensorDataRecord");
+
+            dispatcherTimer = new DispatcherTimer();
+
+            RW = new SensorData();
+            LW = new SensorData();
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e) {
@@ -63,10 +76,18 @@ namespace RealTimeGraph {
                 var value1 = data.Value<Acceleration>();
 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                 
+                    values1_X.Text = "X" + value1.X.ToString();
+                    values1_Y.Text = "Y" + value1.Y.ToString();
+                    values1_Z.Text = "Z" + value1.Z.ToString();
 
-                    values1_X.Text = value1.X.ToString();
-                    values1_Y.Text = value1.Y.ToString();
-                    values1_Z.Text = value1.Z.ToString();
+                    if (RW.RecordData)
+                    {
+                        Logger.LogMsg(value1.X.ToString());
+                       RW.X_Value.Add(value1.X);
+                       RW.Y_Value.Add(value1.Y);
+                       RW.Z_Value.Add(value1.Z);
+                    }
 
                 });
             }));
@@ -79,9 +100,17 @@ namespace RealTimeGraph {
 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
 
-                    values2_X.Text = value2.X.ToString();
-                    values2_Y.Text = value2.Y.ToString();
-                    values2_Z.Text = value2.Z.ToString();
+                    values2_X.Text = "X" + value2.X.ToString();
+                    values2_Y.Text = "Y" + value2.Y.ToString();
+                    values2_Z.Text = "Z" + value2.Z.ToString();
+
+                    if (LW.RecordData)
+                    {
+                        Logger.LogMsg(value2.X.ToString());
+                        LW.X_Value.Add(value2.X);   //Record Data //make class
+                        LW.Y_Value.Add(value2.Y);
+                        LW.Z_Value.Add(value2.Z);
+                    }
 
                 });
             }));
@@ -118,6 +147,71 @@ namespace RealTimeGraph {
                 accelerometer2.Stop();
                 accelerometer2.Acceleration.Stop();
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e) // Start
+        {
+            dispatcherTimer.Tick += Timer_Tick;
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 3);
+            dispatcherTimer.Start();
+            RW.RecordData = true;
+            LW.RecordData = true;
+            Counter.Text = "RECORDING";
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e) // Stop
+        {
+            RW.RecordData = false;
+            LW.RecordData = false;
+            Counter.Text = "STOP";
+            dispatcherTimer.Stop();
+        }
+
+        private void Timer_Tick(object sender, object e)
+        {
+            RW.RecordData = false;  // Stop recording
+            LW.RecordData = false;
+            Counter.Text = "STOP";
+
+            string RW_X = "";
+            string RW_Y = "";
+            string RW_Z = "";
+
+            string LW_X = "";
+            string LW_Y = "";
+            string LW_Z = "";
+
+            foreach (float value in RW.X_Value)
+            {
+                RW_X += value + " ";
+            }
+
+            foreach (float value in RW.Y_Value)
+            {
+                RW_Y += value + " ";
+            }
+
+            foreach (float value in RW.Z_Value)
+            {
+                RW_Z += value + " ";
+            }
+
+            foreach (float value in LW.X_Value)
+            {
+                LW_X += value + " ";
+            }
+
+            foreach (float value in LW.Y_Value)
+            {
+                LW_Y += value + " ";
+            }
+
+            foreach (float value in LW.Z_Value)
+            {
+                LW_Z += value + " ";
+            }
+
+            Logger.LogMsg(RW_X + "," + RW_Y + "," + RW_Z + "," + LW_X + "," + LW_Y + "," + LW_Z + "," + exerciseName.Text);
         }
     }
 }

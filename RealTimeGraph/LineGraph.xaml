@@ -27,5 +27,11 @@
         <TextBlock x:Name="values2_X" HorizontalAlignment="Left" Margin="255,20,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="1"/>
         <TextBlock x:Name="values2_Y" HorizontalAlignment="Left" Margin="255,45,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="1"/>
         <TextBlock x:Name="values2_Z" HorizontalAlignment="Left" Margin="255,71,0,0" Text="TextBlock" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="1"/>
+        <Button Content="Start" Margin="592,488,0,0" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click"/>
+        <Button Content="Stop" Margin="669,488,0,0" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <Button Content="Save" Margin="750,488,0,0" Grid.Row="1" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <TextBlock x:Name="Counter" HorizontalAlignment="Left" Margin="640,331,0,0" Text="Count" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Row="1" FontSize="30"/>
+        <TextBox x:Name="exerciseName" HorizontalAlignment="Left" Margin="592,544,0,0" Grid.Row="1" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="210"/>
+
     </Grid>
 </Page>
