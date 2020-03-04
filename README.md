@@ -1,3 +1,2 @@
-# MetaWear Tutorial
-Sample apps demonstrating how to use the MetaWear C# SDK on Windows 10.  Your Win10 machine must be updated to the Creator's Update to run 
-the demo apps.
+# MetaWear
+Currently, this application can establish a connection with two bluetooth sensors and record data to be supported by .NET's ML library.
